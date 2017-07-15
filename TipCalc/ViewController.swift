@@ -14,11 +14,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var totalLabel: UILabel!
     @IBOutlet weak var tipControl: UISegmentedControl!
     
-    private let tipPercents = [0.18, 0.2, 0.25]
+    private let tipPercents = [0.15, 0.18, 0.2]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        print("view did load")
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,11 +26,23 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        let index = UserDefaults.standard.integer(forKey: SettingsViewController.segmentIndexKey)
+        tipControl.selectedSegmentIndex = index
+        super.viewWillAppear(animated)
+        updateValues()
+        print("view will appear")
+    }
+    
     @IBAction func onMainViewTap(_ sender: Any) {
         view.endEditing(true)
     }
     
     @IBAction func calculateTip(_ sender: Any) {
+        updateValues()
+    }
+    
+    private func updateValues() {
         let billTotal = Double(billTextField.text!) ?? 0.0
         let tip = billTotal * tipPercents[tipControl.selectedSegmentIndex]
         
