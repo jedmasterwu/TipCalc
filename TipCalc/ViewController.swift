@@ -15,10 +15,31 @@ class ViewController: UIViewController {
     @IBOutlet weak var tipControl: UISegmentedControl!
     
     private let tipPercents = [0.15, 0.18, 0.2]
+    private let currencyFormatter = NumberFormatter()
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        // Update formatter currency locale
+        currencyFormatter.locale = Locale.current
+        currencyFormatter.numberStyle = .currency
+    }
     
     override func viewDidLoad() {
+        // Load default tip amount
+        let defaults = UserDefaults.standard
+        tipControl.selectedSegmentIndex = defaults.integer(forKey: Keys.segmentIndexKey)
+        
+        // Determine if last bill amount should be loaded
+        if let lastActive = defaults.object(forKey: Keys.lastActiveKey) as? Date {
+            if Date().timeIntervalSince(lastActive) < Constants.inactiveTime {
+                billTextField.text = defaults.string(forKey: Keys.billAmountKey)
+            }
+        }
+        
+        // Update values
+        updateValues()
         super.viewDidLoad()
-        print("view did load")
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,12 +47,12 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        let index = UserDefaults.standard.integer(forKey: SettingsViewController.segmentIndexKey)
-        tipControl.selectedSegmentIndex = index
-        super.viewWillAppear(animated)
-        updateValues()
-        print("view will appear")
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        let defaults = UserDefaults.standard
+        defaults.set(billTextField.text, forKey: Keys.billAmountKey)
+        defaults.synchronize()
     }
     
     @IBAction func onMainViewTap(_ sender: Any) {
@@ -46,8 +67,8 @@ class ViewController: UIViewController {
         let billTotal = Double(billTextField.text!) ?? 0.0
         let tip = billTotal * tipPercents[tipControl.selectedSegmentIndex]
         
-        tipLabel.text = String(format: "$%.2f", tip)
-        totalLabel.text = String(format: "$%.2f", billTotal + tip)
+        tipLabel.text = currencyFormatter.string(for: tip)
+        totalLabel.text = currencyFormatter.string(for: billTotal + tip)
     }
 }
 

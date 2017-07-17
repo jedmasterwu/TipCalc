@@ -11,11 +11,9 @@ import UIKit
 class SettingsViewController: UIViewController {
     @IBOutlet weak var defaultTipController: UISegmentedControl!
     
-    static let segmentIndexKey = "default_tip_percentage_index"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        defaultTipController.selectedSegmentIndex = UserDefaults.standard.integer(forKey: SettingsViewController.segmentIndexKey)
+        defaultTipController.selectedSegmentIndex = UserDefaults.standard.integer(forKey: Keys.segmentIndexKey)
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,7 +24,7 @@ class SettingsViewController: UIViewController {
 
     @IBAction func updateDefaultTip(_ sender: Any) {
         let defaults = UserDefaults.standard
-        defaults.set(defaultTipController.selectedSegmentIndex, forKey: SettingsViewController.segmentIndexKey)
+        defaults.set(defaultTipController.selectedSegmentIndex, forKey: Keys.segmentIndexKey)
         defaults.synchronize()
     }
     
