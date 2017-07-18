@@ -8,14 +8,20 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class TipViewController: UIViewController {
+    @IBOutlet weak var billLabel: UILabel!
     @IBOutlet weak var billTextField: UITextField!
     @IBOutlet weak var tipLabel: UILabel!
+    @IBOutlet weak var tipAmountLabel: UILabel!
     @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var totalAmountLabel: UILabel!
     @IBOutlet weak var tipControl: UISegmentedControl!
+    @IBOutlet weak var separatorView: UIView!
+    @IBOutlet weak var mainView: UIView!
     
     private let tipPercents = [0.15, 0.18, 0.2]
     private let currencyFormatter = NumberFormatter()
+    private var theme = Theme.normal
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -48,9 +54,11 @@ class ViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
+        theme = ThemeManager.getCurrentTheme()
+        updateColors()
         billTextField.becomeFirstResponder()
+        
+        super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -73,8 +81,24 @@ class ViewController: UIViewController {
         let billTotal = Double(billTextField.text!) ?? 0.0
         let tip = billTotal * tipPercents[tipControl.selectedSegmentIndex]
         
-        tipLabel.text = currencyFormatter.string(for: tip)
-        totalLabel.text = currencyFormatter.string(for: billTotal + tip)
+        tipAmountLabel.text = currencyFormatter.string(for: tip)
+        totalAmountLabel.text = currencyFormatter.string(for: billTotal + tip)
+    }
+    
+    private func updateColors() {
+        mainView.backgroundColor = theme.bgColor
+        mainView.tintColor = theme.tintColor
+        separatorView.backgroundColor = theme.bgColor
+        billTextField.backgroundColor = theme.bgColor
+        billTextField.keyboardAppearance = theme == .dark ? .dark : .light
+        billTextField.tintColor = theme.tintColor
+        
+        billLabel.textColor = theme.textColor
+        billTextField.textColor = theme.textColor
+        tipLabel.textColor = theme.textColor
+        tipAmountLabel.textColor = theme.textColor
+        totalLabel.textColor = theme.textColor
+        totalAmountLabel.textColor = theme.textColor
     }
 }
 

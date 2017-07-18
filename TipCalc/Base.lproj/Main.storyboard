@@ -36,12 +36,30 @@
                                     <action selector="updateDefaultTip:" destination="YvQ-Tk-PEr" eventType="valueChanged" id="gAo-4g-JEy"/>
                                 </connections>
                             </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Dark Theme" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="T5M-3U-uiQ">
+                                <rect key="frame" x="16" y="164" width="94" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="5jc-D7-4EH">
+                                <rect key="frame" x="310" y="159" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="updateTheme:" destination="YvQ-Tk-PEr" eventType="valueChanged" id="FyN-9q-CMQ"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Settings" id="9qN-oU-Qad"/>
                     <connections>
                         <outlet property="defaultTipController" destination="v3F-4J-t3O" id="wS4-IP-BR4"/>
+                        <outlet property="mainView" destination="zDn-Dr-7mR" id="KiN-9N-ise"/>
+                        <outlet property="themeLabel" destination="T5M-3U-uiQ" id="Drw-9h-sww"/>
+                        <outlet property="themeSwitch" destination="5jc-D7-4EH" id="icd-se-1Ew"/>
+                        <outlet property="tipLabel" destination="IFf-pi-j1I" id="EIY-te-gEy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3jK-ZF-lFh" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -51,7 +69,7 @@
         <!--Tip Calculator-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="TipCalc" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="TipViewController" customModule="TipCalc" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -103,7 +121,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
                                 <connections>
-                                    <action selector="calculateTip:" destination="BYZ-38-t0r" eventType="editingChanged" id="Xga-oQ-cHE"/>
+                                    <action selector="calculateTip:" destination="BYZ-38-t0r" eventType="editingChanged" id="dDd-qO-Tvu"/>
                                 </connections>
                             </textField>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="dh5-Mz-TgV">
@@ -115,7 +133,7 @@
                                     <segment title="20%"/>
                                 </segments>
                                 <connections>
-                                    <action selector="calculateTip:" destination="BYZ-38-t0r" eventType="valueChanged" id="4fb-gX-wQZ"/>
+                                    <action selector="calculateTip:" destination="BYZ-38-t0r" eventType="valueChanged" id="JIH-vo-xRd"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>
@@ -133,10 +151,15 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="billTextField" destination="3Ux-sB-5US" id="uGb-er-HmN"/>
-                        <outlet property="tipControl" destination="dh5-Mz-TgV" id="UT0-ki-LJA"/>
-                        <outlet property="tipLabel" destination="JQS-Zr-CKI" id="HDL-es-YRj"/>
-                        <outlet property="totalLabel" destination="Ckx-lG-7Qz" id="vNu-qb-f5T"/>
+                        <outlet property="billLabel" destination="tva-Dg-XXx" id="9h5-nq-ePV"/>
+                        <outlet property="billTextField" destination="3Ux-sB-5US" id="pRT-Sp-UBS"/>
+                        <outlet property="mainView" destination="8bC-Xf-vdC" id="4cN-dk-sTy"/>
+                        <outlet property="separatorView" destination="Im2-mG-41X" id="cxx-og-nHF"/>
+                        <outlet property="tipAmountLabel" destination="JQS-Zr-CKI" id="WqY-hP-Lxx"/>
+                        <outlet property="tipControl" destination="dh5-Mz-TgV" id="oq8-yd-S9F"/>
+                        <outlet property="tipLabel" destination="Yfg-kU-MZa" id="dV2-IN-5I6"/>
+                        <outlet property="totalAmountLabel" destination="Ckx-lG-7Qz" id="bwA-6d-FqF"/>
+                        <outlet property="totalLabel" destination="Tk3-Ol-C95" id="F71-zy-WZV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -146,7 +169,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="537.5" y="154.5"/>
+            <point key="canvasLocation" x="619" y="122"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="0SV-Pw-Pdq">
