@@ -9,19 +9,24 @@
 import UIKit
 
 class TipViewController: UIViewController {
-    @IBOutlet weak var billLabel: UILabel!
+    //@IBOutlet weak var billLabel: UILabel!
     @IBOutlet weak var billTextField: UITextField!
     @IBOutlet weak var tipLabel: UILabel!
     @IBOutlet weak var tipAmountLabel: UILabel!
     @IBOutlet weak var totalLabel: UILabel!
     @IBOutlet weak var totalAmountLabel: UILabel!
     @IBOutlet weak var tipControl: UISegmentedControl!
-    @IBOutlet weak var separatorView: UIView!
+    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var resultsView: UIView!
     @IBOutlet weak var mainView: UIView!
     
     private let tipPercents = [0.15, 0.18, 0.2]
     private let currencyFormatter = NumberFormatter()
     private var theme = Theme.normal
+    
+    private var billOrigin: CGFloat = 0
+    private var resultsOrigin: CGFloat = 0
+    private var tipControlOrigin: CGFloat = 0
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -32,6 +37,11 @@ class TipViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        // Store original locations
+        billOrigin = billTextField.frame.origin.y
+        resultsOrigin = resultsView.frame.origin.x
+        tipControlOrigin = tipControl.frame.origin.y
+        
         // Load default tip amount
         let defaults = UserDefaults.standard
         tipControl.selectedSegmentIndex = defaults.integer(forKey: Keys.segmentIndexKey)
@@ -58,6 +68,15 @@ class TipViewController: UIViewController {
         updateColors()
         billTextField.becomeFirstResponder()
         
+        if billTextField.text == nil || billTextField.text!.isEmpty {
+            showInputOnly()
+        } else {
+            showAll()
+        }
+        
+        print("\(billOrigin), \(resultsOrigin)")
+        updateViews(false)
+        
         super.viewWillAppear(animated)
     }
     
@@ -75,6 +94,7 @@ class TipViewController: UIViewController {
     
     @IBAction func calculateTip(_ sender: Any) {
         updateValues()
+        updateViews(true)
     }
     
     private func updateValues() {
@@ -88,17 +108,58 @@ class TipViewController: UIViewController {
     private func updateColors() {
         mainView.backgroundColor = theme.bgColor
         mainView.tintColor = theme.tintColor
-        separatorView.backgroundColor = theme.bgColor
+        containerView.backgroundColor = theme.bgColor
+        resultsView.backgroundColor = theme.bgColor
         billTextField.backgroundColor = theme.bgColor
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
         
-        billLabel.textColor = theme.textColor
+        //billLabel.textColor = theme.textColor
         billTextField.textColor = theme.textColor
         tipLabel.textColor = theme.textColor
         tipAmountLabel.textColor = theme.textColor
         totalLabel.textColor = theme.textColor
         totalAmountLabel.textColor = theme.textColor
+    }
+    
+    private func showInputOnly() {
+        billTextField.frame.origin.y = containerView.frame.origin.y
+        resultsView.frame.origin.x -= 2000
+        tipControl.frame.origin.y += 2000
+    }
+    
+    private func showAll() {
+        billTextField.frame.origin.y = billOrigin
+        resultsView.frame.origin.x = resultsOrigin
+        tipControl.frame.origin.y = tipControlOrigin
+    }
+    
+    private func showInputOnly(_ animated: Bool) {
+        if animated {
+            UIView.animate(withDuration: 0.2, animations: { 
+                self.showInputOnly()
+            })
+        } else {
+            showInputOnly()
+        }
+    }
+    
+    private func showAll(_ animated: Bool) {
+        if animated {
+            UIView.animate(withDuration: 0.5, animations: { self.showAll()
+            })
+        } else {
+            showAll()
+        }
+    }
+    
+    private func updateViews(_ animated: Bool) {
+        let billAmount = Double(billTextField.text!) ?? 0.0
+        if billAmount == 0.0 {
+            showInputOnly(animated)
+        } else {
+            showAll(animated)
+        }
     }
 }
 
