@@ -26,7 +26,6 @@ class TipViewController: UIViewController {
     
     private var billOrigin: CGFloat = 0
     private var resultsOrigin: CGFloat = 0
-    private var tipControlOrigin: CGFloat = 0
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -37,10 +36,9 @@ class TipViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        // Store original locations
+        // Store bill text view origin
         billOrigin = billTextField.frame.origin.y
         resultsOrigin = resultsView.frame.origin.x
-        tipControlOrigin = tipControl.frame.origin.y
         
         // Load default tip amount
         let defaults = UserDefaults.standard
@@ -73,8 +71,6 @@ class TipViewController: UIViewController {
         } else {
             showAll()
         }
-        
-        print("\(billOrigin), \(resultsOrigin)")
         updateViews(false)
         
         super.viewWillAppear(animated)
@@ -114,7 +110,6 @@ class TipViewController: UIViewController {
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
         
-        //billLabel.textColor = theme.textColor
         billTextField.textColor = theme.textColor
         tipLabel.textColor = theme.textColor
         tipAmountLabel.textColor = theme.textColor
@@ -125,18 +120,20 @@ class TipViewController: UIViewController {
     private func showInputOnly() {
         billTextField.frame.origin.y = containerView.frame.origin.y
         resultsView.frame.origin.x -= 2000
-        tipControl.frame.origin.y += 2000
+        resultsView.alpha = 0.0
+        tipControl.alpha = 0.0
     }
     
     private func showAll() {
         billTextField.frame.origin.y = billOrigin
         resultsView.frame.origin.x = resultsOrigin
-        tipControl.frame.origin.y = tipControlOrigin
+        resultsView.alpha = 1.0
+        tipControl.alpha = 1.0
     }
     
     private func showInputOnly(_ animated: Bool) {
         if animated {
-            UIView.animate(withDuration: 0.2, animations: { 
+            UIView.animate(withDuration: 0.5, animations: {
                 self.showInputOnly()
             })
         } else {
