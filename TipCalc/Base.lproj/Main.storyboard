@@ -210,6 +210,7 @@
                         <outlet property="containerView" destination="Im2-mG-41X" id="RNp-ab-PbD"/>
                         <outlet property="mainView" destination="8bC-Xf-vdC" id="4cN-dk-sTy"/>
                         <outlet property="resultsView" destination="0Ud-Se-8fR" id="Osu-x9-wwJ"/>
+                        <outlet property="settingsButton" destination="HsK-cX-rdp" id="The-Fs-0Ib"/>
                         <outlet property="tipAmountLabel" destination="JQS-Zr-CKI" id="WqY-hP-Lxx"/>
                         <outlet property="tipControl" destination="dh5-Mz-TgV" id="oq8-yd-S9F"/>
                         <outlet property="tipLabel" destination="Yfg-kU-MZa" id="dV2-IN-5I6"/>
@@ -231,7 +232,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aWJ-t3-RHQ" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="VaK-Mf-AMw">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="VaK-Mf-AMw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

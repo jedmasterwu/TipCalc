@@ -19,6 +19,7 @@ class TipViewController: UIViewController {
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var resultsView: UIView!
     @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var settingsButton: UIBarButtonItem!
     
     private let tipPercents = [0.15, 0.18, 0.2]
     private let currencyFormatter = NumberFormatter()
@@ -36,6 +37,10 @@ class TipViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        // Change settings button to an icon
+        settingsButton.title = "\u{f085}"
+        settingsButton.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "FontAwesome", size: 18.0)!], for: .normal)
+        
         // Store bill text view origin
         billOrigin = billTextField.frame.origin.y
         resultsOrigin = resultsView.frame.origin.x
@@ -66,14 +71,12 @@ class TipViewController: UIViewController {
         updateColors()
         billTextField.becomeFirstResponder()
         
-        if billTextField.text == nil || billTextField.text!.isEmpty {
-            showInputOnly()
-        } else {
-            showAll()
-        }
-        updateViews(false)
-        
         super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateViews(false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -110,6 +113,7 @@ class TipViewController: UIViewController {
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
         
+        settingsButton.tintColor = theme.textColor
         billTextField.textColor = theme.textColor
         tipLabel.textColor = theme.textColor
         tipAmountLabel.textColor = theme.textColor

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B944FF361F2E82AA00D5D8A6 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = B944FF351F2E82AA00D5D8A6 /* FontAwesome.otf */; };
 		B99B02371F196DFC00FE3A22 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B02361F196DFC00FE3A22 /* AppDelegate.swift */; };
 		B99B02391F196DFC00FE3A22 /* TipViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B02381F196DFC00FE3A22 /* TipViewController.swift */; };
 		B99B023C1F196DFC00FE3A22 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B99B023A1F196DFC00FE3A22 /* Main.storyboard */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B944FF351F2E82AA00D5D8A6 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.otf; path = FontAwesome/FontAwesome.otf; sourceTree = "<group>"; };
 		B99B02331F196DFC00FE3A22 /* TipCalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TipCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B99B02361F196DFC00FE3A22 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B99B02381F196DFC00FE3A22 /* TipViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipViewController.swift; sourceTree = "<group>"; };
@@ -44,6 +46,7 @@
 		B99B022A1F196DFC00FE3A22 = {
 			isa = PBXGroup;
 			children = (
+				B944FF351F2E82AA00D5D8A6 /* FontAwesome.otf */,
 				B99B02351F196DFC00FE3A22 /* TipCalc */,
 				B99B02341F196DFC00FE3A22 /* Products */,
 			);
@@ -132,6 +135,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B944FF361F2E82AA00D5D8A6 /* FontAwesome.otf in Resources */,
 				B99B02411F196DFC00FE3A22 /* LaunchScreen.storyboard in Resources */,
 				B99B023E1F196DFC00FE3A22 /* Assets.xcassets in Resources */,
 				B99B023C1F196DFC00FE3A22 /* Main.storyboard in Resources */,
@@ -311,6 +315,7 @@
 				B99B02471F196DFC00FE3A22 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
