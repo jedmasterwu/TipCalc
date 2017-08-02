@@ -11,6 +11,15 @@ import UIKit
 class TipViewController: UIViewController {
     @IBOutlet weak var settingsButton: UIBarButtonItem!
     @IBOutlet weak var billTextField: UITextField!
+    @IBOutlet weak var suggestedLabel: UILabel!
+    @IBOutlet weak var percentColumnLabel: UILabel!
+    @IBOutlet weak var tipPercentLabel1: UILabel!
+    @IBOutlet weak var tipPercentLabel2: UILabel!
+    @IBOutlet weak var tipPercentLabel3: UILabel!
+    @IBOutlet weak var tipColumnLabel: UILabel!
+    @IBOutlet weak var tipAmountLabel1: UILabel!
+    @IBOutlet weak var tipAmountLabel2: UILabel!
+    @IBOutlet weak var tipAmountLabel3: UILabel!
     
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var billView: UIView!
@@ -41,6 +50,7 @@ class TipViewController: UIViewController {
         billOrigin = billTextField.frame.origin.y
         resultsOrigin = resultsView.frame.origin.x
         billTextField.contentVerticalAlignment = .center
+        addDoneButtonOnKeyboard()
         
         // Load default tip amount
         // TODO: add default tip amounts
@@ -73,7 +83,7 @@ class TipViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //updateViews(false)
+        updateViews(false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,8 +99,9 @@ class TipViewController: UIViewController {
     }
     
     @IBAction func calculateTip(_ sender: Any) {
+        view.endEditing(true)
         updateValues()
-        //updateViews(true)
+        updateViews(true)
     }
     
     private func updateValues() {
@@ -105,51 +116,62 @@ class TipViewController: UIViewController {
         billTextField.backgroundColor = theme.bgColor
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
+        if let doneBar = billTextField.inputAccessoryView {
+            doneBar.backgroundColor = theme.bgColor
+            doneBar.tintColor = theme.tintColor
+        }
         
         billTextField.textColor = theme.textColor
+        suggestedLabel.textColor = theme.textColor
+        percentColumnLabel.textColor = theme.textColor
+        tipColumnLabel.textColor = theme.textColor
+        tipPercentLabel1.textColor = theme.textColor
+        tipPercentLabel2.textColor = theme.textColor
+        tipPercentLabel3.textColor = theme.textColor
+        tipAmountLabel1.textColor = theme.textColor
+        tipAmountLabel2.textColor = theme.textColor
+        tipAmountLabel3.textColor = theme.textColor
     }
-//
-//    private func showInputOnly() {
-//        billTextField.frame.origin.y = containerView.frame.origin.y
-//        resultsView.frame.origin.x -= 2000
-//        resultsView.alpha = 0.0
-//        tipControl.alpha = 0.0
-//    }
-//    
-//    private func showAll() {
-//        billTextField.frame.origin.y = billOrigin
-//        resultsView.frame.origin.x = resultsOrigin
-//        resultsView.alpha = 1.0
-//        tipControl.alpha = 1.0
-//    }
-//    
-//    private func showInputOnly(_ animated: Bool) {
-//        if animated {
-//            UIView.animate(withDuration: 0.5, animations: {
-//                self.showInputOnly()
-//            })
-//        } else {
-//            showInputOnly()
-//        }
-//    }
-//    
-//    private func showAll(_ animated: Bool) {
-//        if animated {
-//            UIView.animate(withDuration: 0.5, animations: { self.showAll()
-//            })
-//        } else {
-//            showAll()
-//        }
-//    }
-//    
-//    private func updateViews(_ animated: Bool) {
-//        let billAmount = Double(billTextField.text!) ?? 0.0
-//        if billAmount == 0.0 {
-//            showInputOnly(animated)
-//        } else {
-//            showAll(animated)
-//        }
-//    }
+
+    private func showInputOnly() {
+        billTextField.frame.origin.y = billView.frame.origin.y
+        resultsView.frame.origin.x -= 2000
+        resultsView.alpha = 0.0
+    }
+    
+    private func showAll() {
+        billTextField.frame.origin.y = billOrigin
+        resultsView.frame.origin.x = resultsOrigin
+        resultsView.alpha = 1.0
+    }
+    
+    private func showInputOnly(_ animated: Bool) {
+        if animated {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.showInputOnly()
+            })
+        } else {
+            showInputOnly()
+        }
+    }
+    
+    private func showAll(_ animated: Bool) {
+        if animated {
+            UIView.animate(withDuration: 0.5, animations: { self.showAll()
+            })
+        } else {
+            showAll()
+        }
+    }
+    
+    private func updateViews(_ animated: Bool) {
+        let billAmount = Double(billTextField.text!) ?? 0.0
+        if billAmount == 0.0 {
+            showInputOnly(animated)
+        } else {
+            showAll(animated)
+        }
+    }
     
     private func addDoneButtonOnKeyboard() {
         let doneToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
