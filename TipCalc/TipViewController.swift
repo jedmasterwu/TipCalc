@@ -40,6 +40,7 @@ class TipViewController: UIViewController {
         // Change settings button to an icon
         settingsButton.title = "\u{f085}"
         settingsButton.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "FontAwesome", size: 18.0)!], for: .normal)
+        settingsButton.tintColor = UIColor.black
         
         // Store bill text view origin
         billOrigin = billTextField.frame.origin.y
@@ -113,7 +114,6 @@ class TipViewController: UIViewController {
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
         
-        settingsButton.tintColor = theme.textColor
         billTextField.textColor = theme.textColor
         tipLabel.textColor = theme.textColor
         tipAmountLabel.textColor = theme.textColor
