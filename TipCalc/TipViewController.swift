@@ -50,7 +50,7 @@ class TipViewController: UIViewController {
         billOrigin = billTextField.frame.origin.y
         resultsOrigin = resultsView.frame.origin.x
         billTextField.contentVerticalAlignment = .center
-        addDoneButtonOnKeyboard()
+        TipViewController.addDoneButtonOnKeyboard(target: self, selector: #selector(TipViewController.calculateTip), textField: billTextField)
         
         // Load default tip amount
         // TODO: add default tip amounts
@@ -173,11 +173,11 @@ class TipViewController: UIViewController {
         }
     }
     
-    private func addDoneButtonOnKeyboard() {
+    public static func addDoneButtonOnKeyboard(target: Any?, selector: Selector?, textField: UITextField) {
         let doneToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
         doneToolbar.barStyle = UIBarStyle.default
         let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-        let done: UIBarButtonItem  = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.done, target: self, action: #selector(TipViewController.calculateTip))
+        let done: UIBarButtonItem  = UIBarButtonItem(title: "Done", style: .done, target: target, action: selector)
         
         var items = [UIBarButtonItem]()
         items.append(flexSpace)
@@ -186,7 +186,7 @@ class TipViewController: UIViewController {
         doneToolbar.items = items
         doneToolbar.sizeToFit()
         
-        billTextField.inputAccessoryView = doneToolbar
+        textField.inputAccessoryView = doneToolbar
     }
 }
 

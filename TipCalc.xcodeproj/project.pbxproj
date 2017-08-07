@@ -16,6 +16,8 @@
 		B99B02491F19E7DE00FE3A22 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B02481F19E7DE00FE3A22 /* SettingsViewController.swift */; };
 		B99B024B1F1C501900FE3A22 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B024A1F1C501900FE3A22 /* Constants.swift */; };
 		B99B024E1F1DBAEE00FE3A22 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99B024D1F1DBAEE00FE3A22 /* Theme.swift */; };
+		B9A49B5D1F3557250019F3C5 /* TipCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A49B5C1F3557250019F3C5 /* TipCalculator.swift */; };
+		B9A49B5F1F35703C0019F3C5 /* TipResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A49B5E1F35703C0019F3C5 /* TipResult.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		B99B02481F19E7DE00FE3A22 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		B99B024A1F1C501900FE3A22 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B99B024D1F1DBAEE00FE3A22 /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		B9A49B5C1F3557250019F3C5 /* TipCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipCalculator.swift; sourceTree = "<group>"; };
+		B9A49B5E1F35703C0019F3C5 /* TipResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TipResult.swift; path = TipCalc/TipResult.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +50,7 @@
 		B99B022A1F196DFC00FE3A22 = {
 			isa = PBXGroup;
 			children = (
+				B9A49B5E1F35703C0019F3C5 /* TipResult.swift */,
 				B944FF351F2E82AA00D5D8A6 /* FontAwesome.otf */,
 				B99B02351F196DFC00FE3A22 /* TipCalc */,
 				B99B02341F196DFC00FE3A22 /* Products */,
@@ -63,17 +68,34 @@
 		B99B02351F196DFC00FE3A22 /* TipCalc */ = {
 			isa = PBXGroup;
 			children = (
+				B9A49B5A1F35564E0019F3C5 /* ViewControllers */,
+				B9A49B5B1F35568B0019F3C5 /* Utils */,
 				B99B02361F196DFC00FE3A22 /* AppDelegate.swift */,
-				B99B02381F196DFC00FE3A22 /* TipViewController.swift */,
 				B99B023A1F196DFC00FE3A22 /* Main.storyboard */,
-				B99B02481F19E7DE00FE3A22 /* SettingsViewController.swift */,
-				B99B024A1F1C501900FE3A22 /* Constants.swift */,
-				B99B024D1F1DBAEE00FE3A22 /* Theme.swift */,
 				B99B023D1F196DFC00FE3A22 /* Assets.xcassets */,
 				B99B023F1F196DFC00FE3A22 /* LaunchScreen.storyboard */,
 				B99B02421F196DFC00FE3A22 /* Info.plist */,
+				B9A49B5C1F3557250019F3C5 /* TipCalculator.swift */,
 			);
 			path = TipCalc;
+			sourceTree = "<group>";
+		};
+		B9A49B5A1F35564E0019F3C5 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				B99B02381F196DFC00FE3A22 /* TipViewController.swift */,
+				B99B02481F19E7DE00FE3A22 /* SettingsViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		B9A49B5B1F35568B0019F3C5 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				B99B024A1F1C501900FE3A22 /* Constants.swift */,
+				B99B024D1F1DBAEE00FE3A22 /* Theme.swift */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,9 +171,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9A49B5F1F35703C0019F3C5 /* TipResult.swift in Sources */,
 				B99B02391F196DFC00FE3A22 /* TipViewController.swift in Sources */,
 				B99B024B1F1C501900FE3A22 /* Constants.swift in Sources */,
 				B99B024E1F1DBAEE00FE3A22 /* Theme.swift in Sources */,
+				B9A49B5D1F3557250019F3C5 /* TipCalculator.swift in Sources */,
 				B99B02371F196DFC00FE3A22 /* AppDelegate.swift in Sources */,
 				B99B02491F19E7DE00FE3A22 /* SettingsViewController.swift in Sources */,
 			);

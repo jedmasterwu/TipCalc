@@ -11,8 +11,9 @@ import Foundation
 struct Keys {
     static let lastActiveKey = "last_active_time"
     static let billAmountKey = "saved_bill_amount"
-    static let segmentIndexKey = "default_tip_percentage_index"
+    static let suggestedTipsKey = "suggested_tip_percentages"
     static let themeKey = "selected_theme"
+    static let tipCalc = "tip_calculator"
 }
 
 struct Constants {
