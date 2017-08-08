@@ -9,100 +9,204 @@
 import UIKit
 
 class SettingsViewController: UITableViewController {
-    @IBOutlet weak var settingsTable: UITableView!
-    @IBOutlet weak var tipLowLabel: UILabel!
-    @IBOutlet weak var tipMidLabel: UILabel!
-    @IBOutlet weak var tipHighLabel: UILabel!
-    @IBOutlet weak var tipLowTextField: UITextField!
-    @IBOutlet weak var tipMidTextField: UITextField!
-    @IBOutlet weak var tipHighTextField: UITextField!
-    @IBOutlet weak var themeLabel: UILabel!
-    @IBOutlet weak var themeSwitch: UISwitch!
     
-    private var theme = Theme.normal
-    private var suggestedTips = [15, 18, 20]
-    
+    let tipCategory = ["low", "mid", "high"]
+    let defaults = UserDefaults.standard
+    var tipPercentages = [15, 18, 20]
+    var theme = Theme.normal
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let storedTips = UserDefaults.standard.object(forKey: Keys.suggestedTipsKey) {
-            suggestedTips = storedTips as! [Int]
-        }
-        TipViewController.addDoneButtonOnKeyboard(target: self, selector: #selector(SettingsViewController.updateSuggestedTips), textField: tipLowTextField)
-        TipViewController.addDoneButtonOnKeyboard(target: self, selector: #selector(SettingsViewController.updateSuggestedTips), textField: tipMidTextField)
-        TipViewController.addDoneButtonOnKeyboard(target: self, selector: #selector(SettingsViewController.updateSuggestedTips), textField: tipHighTextField)
+        
+        tableView.register(TipCell.self, forCellReuseIdentifier: "tipCell")
+        tableView.register(ThemeCell.self, forCellReuseIdentifier: "themeCell")
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        theme = ThemeManager.getCurrentTheme()
-        themeSwitch.isOn = theme == .dark
-        updateColors()
-        updateValues()
         super.viewWillAppear(animated)
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func updateTheme(_ sender: Any) {
-        self.theme = themeSwitch.isOn ? .dark : .normal
-        ThemeManager.storeTheme(self.theme)
-        updateColors()
-    }
-    
-    @IBAction func updateSuggestedTips(_ sender: Any) {
-        view.endEditing(true)
-        let tipLow = Int(tipLowTextField.text!) ?? suggestedTips[0]
-        let tipMid = Int(tipMidTextField.text!) ?? suggestedTips[1]
-        let tipHigh = Int(tipHighTextField.text!) ?? suggestedTips[2]
         
-        let newTips = [tipLow, tipMid, tipHigh]
-        if Set(newTips).count == 3 {
-            suggestedTips = newTips.sorted()
-            saveSuggestedTips()
-        }
-        updateValues()
+        loadTheme()
+        loadTips()
+        updateColor(darkThemeOn: theme == .dark)
     }
     
-    private func updateColors() {
-        settingsTable.backgroundColor = theme.bgColor
-        settingsTable.backgroundView?.backgroundColor = theme.bgColor
-        for i in 0..<settingsTable.numberOfRows(inSection: 0) {
-            if let cell = settingsTable.cellForRow(at: IndexPath(row: i, section: 0)) {
-                cell.backgroundColor = theme.bgColor
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50.0
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tipPercentages.count + 1
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: SettingsCell
+        if indexPath.row < tipPercentages.count {
+            cell = tableView.dequeueReusableCell(withIdentifier: "tipCell", for: indexPath) as! SettingsCell
+            let tipCell = cell as! TipCell
+            tipCell.updateText(row: indexPath.row)
+            tipCell.updateTip(tipPercentages[indexPath.row])
+        } else {
+            cell = tableView.dequeueReusableCell(withIdentifier: "themeCell", for: indexPath) as! SettingsCell
+            let themeCell = cell as! ThemeCell
+            themeCell.updateSwitch(theme == .dark)
+        }
+        cell.selectionStyle = .none
+        cell.settingsViewController = self
+        return cell
+    }
+    
+    func tipChanged(row: Int, newTipPercentage: Int) {
+        if newTipPercentage > 0 {
+            var needsUpdating = true
+            for i in 0..<tipPercentages.count {
+                if newTipPercentage == tipPercentages[i] {
+                    needsUpdating = false
+                    break
+                }
             }
+            
+            if needsUpdating {
+                tipPercentages[row] = newTipPercentage
+                tipPercentages.sort()
+                saveTips()
+            }
+            
         }
-        tipLowLabel.textColor = theme.textColor
-        tipLowTextField.textColor = theme.textColor
-        tipMidLabel.textColor = theme.textColor
-        tipMidTextField.textColor = theme.textColor
-        tipHighLabel.textColor = theme.textColor
-        tipHighTextField.textColor = theme.textColor
-        themeLabel.textColor = theme.textColor
+        
+        for i in 0..<tipPercentages.count {
+            let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as! TipCell
+            cell.updateTip(tipPercentages[i])
+        }
     }
     
-    private func updateValues() {
-        tipLowTextField.text = String(suggestedTips[0])
-        tipMidTextField.text = String(suggestedTips[1])
-        tipHighTextField.text = String(suggestedTips[2])
+    func updateColor(darkThemeOn: Bool) {
+        theme = darkThemeOn ? .dark : .normal
+        saveTheme()
+        view.backgroundColor = theme.bgColor
+        for i in 0..<(tipPercentages.count + 1) {
+            let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as! SettingsCell
+            cell.updateColors(theme)
+        }
     }
     
-    private func saveSuggestedTips() {
-        let defaults = UserDefaults.standard
-        defaults.set(suggestedTips, forKey: Keys.suggestedTipsKey)
+    private func loadTheme() {
+        theme = defaults.bool(forKey: Keys.themeKey) ? .dark : .normal
+    }
+    
+    private func loadTips() {
+        tipPercentages = defaults.array(forKey: Keys.suggestedTipsKey) as! [Int]
+    }
+    
+    private func saveTheme() {
+        defaults.set(theme == .dark, forKey: Keys.themeKey)
         defaults.synchronize()
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    private func saveTips() {
+        defaults.set(tipPercentages, forKey: Keys.suggestedTipsKey)
     }
-    */
+    
+    static func createSettingCellView(cell: UITableViewCell, v0: UIView, v1: UIView) {
+        cell.addSubview(v0)
+        cell.addSubview(v1)
+        
+        cell.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[v0]-8-[v1(60)]-16-|",
+                                                      options: NSLayoutFormatOptions(),
+                                                      metrics: nil,
+                                                      views: ["v0": v0, "v1": v1]))
+        cell.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v0]|",
+                                                      options: NSLayoutFormatOptions(),
+                                                      metrics: nil,
+                                                      views: ["v0": v0]))
+        cell.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v1]|",
+                                                      options: NSLayoutFormatOptions(),
+                                                      metrics: nil,
+                                                      views: ["v1": v1]))
+    }
+}
 
+class SettingsCell: UITableViewCell {
+    let settingNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    var settingsViewController: SettingsViewController?
+    
+    func updateColors(_ theme: Theme) {
+        backgroundColor = theme.bgColor
+        settingNameLabel.textColor = theme.textColor
+    }
+}
+
+class TipCell: SettingsCell {
+    var tipField: UITextField = {
+        let field = UITextField()
+        field.font = Constants.settingsFont
+        field.clearsOnBeginEditing = true
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.textAlignment = .right
+        field.keyboardType = .decimalPad
+        return field
+    }()
+    var rowNum: Int?
+    var tipPercent: Int?
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        Utils.addDoneButtonOnKeyboard(target: self, selector: #selector(TipCell.updateTipPercentages), textField: tipField)
+        tipField.addTarget(self, action: #selector(TipCell.updateTipPercentages), for: .editingDidEnd)
+        SettingsViewController.createSettingCellView(cell: self, v0: settingNameLabel, v1: tipField)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func updateColors(_ theme: Theme) {
+        super.updateColors(theme)
+        tipField.textColor = theme.textColor
+        tipField.keyboardAppearance = (theme == .dark) ? .dark : .light
+    }
+    
+    func updateText(row: Int) {
+        settingNameLabel.text = Constants.tipSettingNames[row]
+        rowNum = row
+    }
+    
+    func updateTip(_ tipPercentage: Int) {
+        self.tipPercent = tipPercentage
+        tipField.text = String(tipPercentage)
+    }
+    
+    func updateTipPercentages() {
+        settingsViewController!.view.endEditing(true)
+        let newPercentage = Int(tipField.text!) ?? 0
+        settingsViewController?.tipChanged(row: rowNum!, newTipPercentage: newPercentage)
+    }
+}
+
+class ThemeCell: SettingsCell {
+    let themeSwitch = UISwitch()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        settingNameLabel.text = Constants.themeSettingName
+        themeSwitch.translatesAutoresizingMaskIntoConstraints = false
+        themeSwitch.addTarget(self, action: #selector(ThemeCell.updateTheme), for: .valueChanged)
+        SettingsViewController.createSettingCellView(cell: self, v0: settingNameLabel, v1: themeSwitch)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func updateSwitch(_ isDarkMode: Bool) {
+        themeSwitch.isOn = isDarkMode
+    }
+    
+    func updateTheme() {
+        settingsViewController?.updateColor(darkThemeOn: themeSwitch.isOn)
+    }
 }

@@ -32,7 +32,7 @@ class TipCalculator {
         defaults.synchronize()
     }
     
-    public func calculate() -> [String: (String, String)] {
+    public func calculate() {
         
     }
 }
