@@ -38,6 +38,7 @@ As part of your pre-work submission, please reflect on the app and answer the fo
 **Question 1**: "What are your reactions to the iOS app development platform so far? How would you describe outlets and actions to another developer? Bonus: any idea how they are being implemented under the hood? (It might give you some ideas if you right-click on the Storyboard and click Open As->Source Code")
 
 **Answer:**
+
 My impression so far is that it's easy to jump in and start coding, but it takes a lot of time and effort to make things up to the standards we are used to in a professional app. Making the most basic version of the app wasn't super hard. Simply following the tutorial and playing around with the storyboards was enough. However, creating a well polished, good looking, functional UI required a lot more reading and research. It's also been very fun and rewarding to make this app.
 
 Outlets are references to specific UI elements in your storyboard. Actions are the functions that get called when some specific event happens to an element or view. The IBOutlet and IBAction keywords are used by Xcode and the Interface Builder to determine which properties and functions are outlets and actions. From looking at the source of the storyboard, each outlet has a property attribute which has the name of the reference in the view controller and a destination property which maps it to the UI element in the storyboard.
