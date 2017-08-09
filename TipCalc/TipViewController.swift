@@ -9,25 +9,21 @@
 import UIKit
 
 class TipViewController: UIViewController {
+    // MARK: Outlets
     @IBOutlet weak var settingsButton: UIBarButtonItem!
     @IBOutlet weak var billTextField: UITextField!
-    @IBOutlet weak var suggestedLabel: UILabel!
-    @IBOutlet weak var percentColumnLabel: UILabel!
-    @IBOutlet weak var tipPercentLabel1: UILabel!
-    @IBOutlet weak var tipPercentLabel2: UILabel!
-    @IBOutlet weak var tipPercentLabel3: UILabel!
-    @IBOutlet weak var tipColumnLabel: UILabel!
-    @IBOutlet weak var tipAmountLabel1: UILabel!
-    @IBOutlet weak var tipAmountLabel2: UILabel!
-    @IBOutlet weak var tipAmountLabel3: UILabel!
+    @IBOutlet var allLabels: [UILabel]!
     
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var billView: UIView!
     @IBOutlet weak var resultsView: UIView!
 
-    private let tipPercents = [0.15, 0.18, 0.2]
+    // MARK: Properties
+    private let defaults = UserDefaults.standard
     private let currencyFormatter = NumberFormatter()
+    private var tipPercents = [15, 18, 20]
     private var theme = Theme.normal
+    private var suggestedTipRows: [String: UILabel] = [String: UILabel]()
     
     private var billOrigin: CGFloat = 0
     private var resultsOrigin: CGFloat = 0
@@ -40,7 +36,16 @@ class TipViewController: UIViewController {
         currencyFormatter.numberStyle = .currency
     }
 
+    // MARK: View lifecycle
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        for label in allLabels {
+            if let accessibilityLabel = label.accessibilityLabel {
+                suggestedTipRows[accessibilityLabel] = label
+            }
+        }
+        
         // Change settings button to an icon
         settingsButton.title = "\u{f085}"
         settingsButton.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "FontAwesome", size: 18.0)!], for: .normal)
@@ -50,12 +55,12 @@ class TipViewController: UIViewController {
         billOrigin = billTextField.frame.origin.y
         resultsOrigin = resultsView.frame.origin.x
         billTextField.contentVerticalAlignment = .center
-        Utils.addDoneButtonOnKeyboard(target: self, selector: #selector(TipViewController.calculateTip), textField: billTextField)
+        Utils.addDoneButtonOnKeyboard(target: self, selector: #selector(TipViewController.onMainViewTap), textField: billTextField)
         
         // Load default tip amount
-        // TODO: add default tip amounts
-        let defaults = UserDefaults.standard
-        
+        if let storePercents = defaults.array(forKey: Keys.suggestedTipsKey) as? [Int] {
+            tipPercents = storePercents
+        }
 
         // Determine if last bill amount should be loaded
         if let lastActive = defaults.object(forKey: Keys.lastActiveKey) as? Date {
@@ -66,7 +71,6 @@ class TipViewController: UIViewController {
 
         // Update values
         updateValues()
-        super.viewDidLoad()
     }
 
     override func didReceiveMemoryWarning() {
@@ -99,7 +103,6 @@ class TipViewController: UIViewController {
     }
     
     @IBAction func calculateTip(_ sender: Any) {
-        view.endEditing(true)
         updateValues()
         updateViews(true)
     }
@@ -116,21 +119,15 @@ class TipViewController: UIViewController {
         billTextField.backgroundColor = theme.bgColor
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
+        billTextField.textColor = theme.textColor
         if let doneBar = billTextField.inputAccessoryView {
             doneBar.backgroundColor = theme.bgColor
             doneBar.tintColor = theme.tintColor
         }
         
-        billTextField.textColor = theme.textColor
-        suggestedLabel.textColor = theme.textColor
-        percentColumnLabel.textColor = theme.textColor
-        tipColumnLabel.textColor = theme.textColor
-        tipPercentLabel1.textColor = theme.textColor
-        tipPercentLabel2.textColor = theme.textColor
-        tipPercentLabel3.textColor = theme.textColor
-        tipAmountLabel1.textColor = theme.textColor
-        tipAmountLabel2.textColor = theme.textColor
-        tipAmountLabel3.textColor = theme.textColor
+        for label in allLabels {
+            label.textColor = theme.textColor
+        }
     }
 
     private func showInputOnly() {
@@ -140,7 +137,7 @@ class TipViewController: UIViewController {
     }
     
     private func showAll() {
-        billTextField.frame.origin.y = billOrigin
+        billTextField.frame.origin.y = billView.frame.origin.y + billView.frame.height * 0.25
         resultsView.frame.origin.x = resultsOrigin
         resultsView.alpha = 1.0
     }
@@ -173,4 +170,3 @@ class TipViewController: UIViewController {
         }
     }
 }
-

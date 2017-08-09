@@ -94,7 +94,9 @@ class SettingsViewController: UITableViewController {
     }
     
     private func loadTips() {
-        tipPercentages = defaults.array(forKey: Keys.suggestedTipsKey) as! [Int]
+        if let storePercentages = defaults.array(forKey: Keys.suggestedTipsKey) as? [Int] {
+            tipPercentages = storePercentages
+        }
     }
     
     private func saveTheme() {
