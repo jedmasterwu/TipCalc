@@ -4,7 +4,7 @@
 
 Submitted by: **Wuming Xie**
 
-Time spent: **16** hours spent in total
+Time spent: **18** hours spent in total
 
 ## User Stories
 
@@ -21,13 +21,16 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 * [x] Light/Dark theme for the app
-* [ ] Giving suggested tip amounts like on a restaurant bill
+* [x] Giving suggested tip amounts like on a restaurant bill
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
-
+Original version:
 <img src='http://i.imgur.com/b1RBnub.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Redesigned version:
+<img src='http://i.imgur.com/5UdWyHb.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
