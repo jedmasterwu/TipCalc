@@ -6,15 +6,20 @@
 //  Copyright © 2017 Wuming Xie. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct Keys {
     static let lastActiveKey = "last_active_time"
     static let billAmountKey = "saved_bill_amount"
-    static let segmentIndexKey = "default_tip_percentage_index"
+    static let suggestedTipsKey = "suggested_tip_percentages"
     static let themeKey = "selected_theme"
+    static let tipCalc = "tip_calculator"
 }
 
 struct Constants {
+    static let settingsCellHeight = CGFloat(50.0)
     static let inactiveTime = 600.0
+    static let tipSettingNames = ["Tip percent low", "Tip percent low", "Tip percent high"]
+    static let themeSettingName = "Dark theme"
+    static let settingsFont = UIFont(name: "HelveticaNeue", size: 20.0)
 }

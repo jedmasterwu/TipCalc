@@ -9,24 +9,21 @@
 import UIKit
 
 class TipViewController: UIViewController {
-    //@IBOutlet weak var billLabel: UILabel!
-    @IBOutlet weak var billTextField: UITextField!
-    @IBOutlet weak var tipLabel: UILabel!
-    @IBOutlet weak var tipAmountLabel: UILabel!
-    @IBOutlet weak var totalLabel: UILabel!
-    @IBOutlet weak var totalAmountLabel: UILabel!
-    @IBOutlet weak var tipControl: UISegmentedControl!
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var resultsView: UIView!
-    @IBOutlet weak var mainView: UIView!
+    // MARK: Outlets
     @IBOutlet weak var settingsButton: UIBarButtonItem!
+    @IBOutlet weak var billTextField: UITextField!
+    @IBOutlet var allLabels: [UILabel]!
     
-    private let tipPercents = [0.15, 0.18, 0.2]
+    @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var billView: UIView!
+    @IBOutlet weak var resultsView: UIView!
+
+    // MARK: Properties
+    private let defaults = UserDefaults.standard
     private let currencyFormatter = NumberFormatter()
+    private var tipPercents = [15, 18, 20]
     private var theme = Theme.normal
-    
-    private var billOrigin: CGFloat = 0
-    private var resultsOrigin: CGFloat = 0
+    private var suggestedTipRows: [String: UILabel] = [String: UILabel]()
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -35,49 +32,43 @@ class TipViewController: UIViewController {
         currencyFormatter.locale = Locale.current
         currencyFormatter.numberStyle = .currency
     }
-    
+
+    // MARK: View lifecycle
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        for label in allLabels {
+            if let accessibilityLabel = label.accessibilityLabel {
+                suggestedTipRows[accessibilityLabel] = label
+            }
+        }
+        
         // Change settings button to an icon
         settingsButton.title = "\u{f085}"
         settingsButton.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "FontAwesome", size: 18.0)!], for: .normal)
         settingsButton.tintColor = UIColor.black
         
-        // Store bill text view origin
-        billOrigin = billTextField.frame.origin.y
-        resultsOrigin = resultsView.frame.origin.x
-        
-        // Load default tip amount
-        let defaults = UserDefaults.standard
-        tipControl.selectedSegmentIndex = defaults.integer(forKey: Keys.segmentIndexKey)
-        
+        // Add a done button to the keyboard
+        Utils.addDoneButtonOnKeyboard(target: self, selector: #selector(TipViewController.onMainViewTap), textField: billTextField)
+
         // Determine if last bill amount should be loaded
         if let lastActive = defaults.object(forKey: Keys.lastActiveKey) as? Date {
             if Date().timeIntervalSince(lastActive) < Constants.inactiveTime {
                 billTextField.text = defaults.string(forKey: Keys.billAmountKey)
             }
         }
-        
-        // Update values
-        updateValues()
-        super.viewDidLoad()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         theme = ThemeManager.getCurrentTheme()
         updateColors()
+        if let storedPercents = defaults.array(forKey: Keys.suggestedTipsKey) as? [Int] {
+            tipPercents = storedPercents
+        }
+        updatePercents()
+        showInputOnly(false)
         billTextField.becomeFirstResponder()
-        
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        updateViews(false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -88,6 +79,7 @@ class TipViewController: UIViewController {
         defaults.synchronize()
     }
     
+    // MARK: Actions
     @IBAction func onMainViewTap(_ sender: Any) {
         view.endEditing(true)
     }
@@ -97,42 +89,55 @@ class TipViewController: UIViewController {
         updateViews(true)
     }
     
-    private func updateValues() {
-        let billTotal = Double(billTextField.text!) ?? 0.0
-        let tip = billTotal * tipPercents[tipControl.selectedSegmentIndex]
-        
-        tipAmountLabel.text = currencyFormatter.string(for: tip)
-        totalAmountLabel.text = currencyFormatter.string(for: billTotal + tip)
+    @IBAction func editingBegan(_ sender: Any) {
+        showInputOnly(true)
     }
     
+    private func updatePercents() {
+        for i in 0..<tipPercents.count {
+            suggestedTipRows["p\(i)"]?.text = "\(tipPercents[i])%"
+        }
+    }
+    
+    private func updateValues() {
+        let billTotal = Double(billTextField.text!) ?? 0.0
+        for i in 0..<tipPercents.count {
+            let tipAmount = Double(tipPercents[i]) * billTotal/100.0
+            suggestedTipRows["tip\(i)"]?.text = currencyFormatter.string(for: tipAmount)
+            suggestedTipRows["total\(i)"]?.text = currencyFormatter.string(for: tipAmount + billTotal)
+        }
+    }
+
     private func updateColors() {
         mainView.backgroundColor = theme.bgColor
         mainView.tintColor = theme.tintColor
-        containerView.backgroundColor = theme.bgColor
+        billView.backgroundColor = theme.bgColor
         resultsView.backgroundColor = theme.bgColor
         billTextField.backgroundColor = theme.bgColor
         billTextField.keyboardAppearance = theme == .dark ? .dark : .light
         billTextField.tintColor = theme.tintColor
-        
         billTextField.textColor = theme.textColor
-        tipLabel.textColor = theme.textColor
-        tipAmountLabel.textColor = theme.textColor
-        totalLabel.textColor = theme.textColor
-        totalAmountLabel.textColor = theme.textColor
+        if let doneBar = billTextField.inputAccessoryView {
+            doneBar.backgroundColor = theme.bgColor
+            doneBar.tintColor = theme.tintColor
+        }
+        
+        for label in allLabels {
+            label.textColor = theme.textColor
+        }
     }
-    
+
+    // MARK: Animations
     private func showInputOnly() {
-        billTextField.frame.origin.y = containerView.frame.origin.y
+        billTextField.frame.origin.y = billView.frame.origin.y
         resultsView.frame.origin.x -= 2000
         resultsView.alpha = 0.0
-        tipControl.alpha = 0.0
     }
     
     private func showAll() {
-        billTextField.frame.origin.y = billOrigin
-        resultsView.frame.origin.x = resultsOrigin
+        billTextField.frame.origin.y = billView.frame.origin.y + billView.frame.height * 0.25
+        resultsView.frame.origin.x += 2000
         resultsView.alpha = 1.0
-        tipControl.alpha = 1.0
     }
     
     private func showInputOnly(_ animated: Bool) {
@@ -163,4 +168,3 @@ class TipViewController: UIViewController {
         }
     }
 }
-
