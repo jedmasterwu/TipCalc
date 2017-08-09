@@ -17,6 +17,7 @@ struct Keys {
 }
 
 struct Constants {
+    static let settingsCellHeight = CGFloat(50.0)
     static let inactiveTime = 600.0
     static let tipSettingNames = ["Tip percent low", "Tip percent low", "Tip percent high"]
     static let themeSettingName = "Dark theme"

@@ -25,9 +25,6 @@ class TipViewController: UIViewController {
     private var theme = Theme.normal
     private var suggestedTipRows: [String: UILabel] = [String: UILabel]()
     
-    private var billOrigin: CGFloat = 0
-    private var resultsOrigin: CGFloat = 0
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
@@ -51,16 +48,8 @@ class TipViewController: UIViewController {
         settingsButton.setTitleTextAttributes([NSFontAttributeName: UIFont(name: "FontAwesome", size: 18.0)!], for: .normal)
         settingsButton.tintColor = UIColor.black
         
-        // Store bill text view origin
-        billOrigin = billTextField.frame.origin.y
-        resultsOrigin = resultsView.frame.origin.x
-        billTextField.contentVerticalAlignment = .center
+        // Add a done button to the keyboard
         Utils.addDoneButtonOnKeyboard(target: self, selector: #selector(TipViewController.onMainViewTap), textField: billTextField)
-        
-        // Load default tip amount
-        if let storePercents = defaults.array(forKey: Keys.suggestedTipsKey) as? [Int] {
-            tipPercents = storePercents
-        }
 
         // Determine if last bill amount should be loaded
         if let lastActive = defaults.object(forKey: Keys.lastActiveKey) as? Date {
@@ -68,26 +57,18 @@ class TipViewController: UIViewController {
                 billTextField.text = defaults.string(forKey: Keys.billAmountKey)
             }
         }
-
-        // Update values
-        updateValues()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         theme = ThemeManager.getCurrentTheme()
         updateColors()
+        if let storedPercents = defaults.array(forKey: Keys.suggestedTipsKey) as? [Int] {
+            tipPercents = storedPercents
+        }
+        updatePercents()
+        showInputOnly(false)
         billTextField.becomeFirstResponder()
-        
-        super.viewWillAppear(animated)
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        updateViews(false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -98,6 +79,7 @@ class TipViewController: UIViewController {
         defaults.synchronize()
     }
     
+    // MARK: Actions
     @IBAction func onMainViewTap(_ sender: Any) {
         view.endEditing(true)
     }
@@ -107,8 +89,23 @@ class TipViewController: UIViewController {
         updateViews(true)
     }
     
+    @IBAction func editingBegan(_ sender: Any) {
+        showInputOnly(true)
+    }
+    
+    private func updatePercents() {
+        for i in 0..<tipPercents.count {
+            suggestedTipRows["p\(i)"]?.text = "\(tipPercents[i])%"
+        }
+    }
+    
     private func updateValues() {
-        let _ = Double(billTextField.text!) ?? 0.0
+        let billTotal = Double(billTextField.text!) ?? 0.0
+        for i in 0..<tipPercents.count {
+            let tipAmount = Double(tipPercents[i]) * billTotal/100.0
+            suggestedTipRows["tip\(i)"]?.text = currencyFormatter.string(for: tipAmount)
+            suggestedTipRows["total\(i)"]?.text = currencyFormatter.string(for: tipAmount + billTotal)
+        }
     }
 
     private func updateColors() {
@@ -130,6 +127,7 @@ class TipViewController: UIViewController {
         }
     }
 
+    // MARK: Animations
     private func showInputOnly() {
         billTextField.frame.origin.y = billView.frame.origin.y
         resultsView.frame.origin.x -= 2000
@@ -138,7 +136,7 @@ class TipViewController: UIViewController {
     
     private func showAll() {
         billTextField.frame.origin.y = billView.frame.origin.y + billView.frame.height * 0.25
-        resultsView.frame.origin.x = resultsOrigin
+        resultsView.frame.origin.x += 2000
         resultsView.alpha = 1.0
     }
     

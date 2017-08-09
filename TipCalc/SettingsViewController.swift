@@ -17,7 +17,7 @@ class SettingsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tableView.separatorStyle = .none
         tableView.register(TipCell.self, forCellReuseIdentifier: "tipCell")
         tableView.register(ThemeCell.self, forCellReuseIdentifier: "themeCell")
     }
@@ -31,7 +31,7 @@ class SettingsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50.0
+        return Constants.settingsCellHeight
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -120,7 +120,7 @@ class SettingsViewController: UITableViewController {
                                                       options: NSLayoutFormatOptions(),
                                                       metrics: nil,
                                                       views: ["v0": v0]))
-        cell.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v1]|",
+        cell.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[v1]-8-|",
                                                       options: NSLayoutFormatOptions(),
                                                       metrics: nil,
                                                       views: ["v1": v1]))
@@ -148,7 +148,7 @@ class TipCell: SettingsCell {
         field.font = Constants.settingsFont
         field.clearsOnBeginEditing = true
         field.translatesAutoresizingMaskIntoConstraints = false
-        field.textAlignment = .right
+        field.textAlignment = .center
         field.keyboardType = .decimalPad
         return field
     }()
